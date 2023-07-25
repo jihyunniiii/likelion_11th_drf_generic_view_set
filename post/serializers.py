@@ -9,7 +9,7 @@ class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = '__all__'
-        read_only_field = ['id', 'created_at', 'updated_at', 'comments']
+        read_only_field = ['id', 'created_at', 'updated_at', 'comments', 'like']
 
 class CommentSerializer(serializers.ModelSerializer):
     post = serializers.SerializerMethodField()

@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer, PostListSerializer
 from .permissions import IsOwnerOrReadOnly
+from rest_framework.decorators import action
 
 # Create your views here.
 class PostViewSet(viewsets.ModelViewSet):
@@ -20,6 +21,14 @@ class PostViewSet(viewsets.ModelViewSet):
         if self.action in ["create", "update", "destroy"]:
             return [IsAdminUser()]
         return[]
+    
+    @action(methods=["GET"], detail=True)
+    def likes_cnt(self, request, pk=None):
+        post = self.get_object()
+        post.like += 1
+        post.save(update_fields=["like"])
+        return Response()
+        
 
 class CommentViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin):
     queryset = Comment.objects.all()

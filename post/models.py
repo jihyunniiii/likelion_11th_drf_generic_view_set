@@ -9,6 +9,7 @@ class Post(models.Model):
     content = models.CharField(max_length=1000)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    like = models.PositiveSmallIntegerField(default=0)
 
 class Comment(models.Model):
     id = models.AutoField(primary_key=True)

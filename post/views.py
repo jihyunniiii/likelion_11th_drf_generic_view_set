@@ -28,6 +28,12 @@ class PostViewSet(viewsets.ModelViewSet):
         post.like += 1
         post.save(update_fields=["like"])
         return Response()
+    
+    @action(methods=["GET"], detail=False)
+    def like_top_3(self, request):
+        like_top_3 = self.get_queryset().order_by("-like")[:3]
+        like_top_3_serializer = PostSerializer(like_top_3, many=True)
+        return Response(like_top_3_serializer.data)
         
 
 class CommentViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin):

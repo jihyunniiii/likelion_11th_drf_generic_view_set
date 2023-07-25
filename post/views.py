@@ -2,9 +2,10 @@ from django.shortcuts import render
 from rest_framework import viewsets, mixins
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer, PostListSerializer
+from .permissions import IsOwnerOrReadOnly
 
 # Create your views here.
 class PostViewSet(viewsets.ModelViewSet):
@@ -14,13 +15,24 @@ class PostViewSet(viewsets.ModelViewSet):
         if self.action == "list":
             return PostListSerializer
         return PostSerializer
+    
+    def get_permissions(self):
+        if self.action in ["create", "update", "destroy"]:
+            return [IsAdminUser()]
+        return[]
 
 class CommentViewSet(viewsets.GenericViewSet, mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
 
+    def get_permissions(self):
+        if self.action in ["create", "update", "destroy"]:
+            return [IsOwnerOrReadOnly()]
+        return[]
+    
 class PostCommentViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin):
     serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         post = self.kwargs.get("post_id")

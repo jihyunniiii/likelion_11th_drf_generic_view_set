@@ -7,10 +7,13 @@ from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer, PostListSerializer
 from .permissions import IsOwnerOrReadOnly
 from rest_framework.decorators import action
+from rest_framework.filters import SearchFilter
 
 # Create your views here.
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
+    filter_backends = [SearchFilter]
+    search_fields = ["title", "content"]
     
     def get_serializer_class(self):
         if self.action == "list":

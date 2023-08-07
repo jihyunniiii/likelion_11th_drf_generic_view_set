@@ -4,18 +4,12 @@ from .models import *
 
 class PostSerializer(serializers.ModelSerializer):
     comments = serializers.SerializerMethodField()
-    likes_count = serializers.SerializerMethodField()
-    dislikes_count = serializers.SerializerMethodField()
+    likes_count = serializers.IntegerField()
+    dislikes_count = serializers.IntegerField()
 
     def get_comments(self, instance):
         serializers = CommentSerializer(instance.comments, many=True)
         return serializers.data
-
-    def get_likes_count(self, instance):
-        return PostReaction.objects.filter(post=instance, reaction="like").count()
-
-    def get_dislikes_count(self, instance):
-        return PostReaction.objects.filter(post=instance, reaction="dislike").count()
 
     class Meta:
         model = Post

@@ -8,11 +8,19 @@ from .serializers import PostSerializer, CommentSerializer, PostListSerializer
 from .permissions import IsOwnerOrReadOnly
 from rest_framework.decorators import action
 from rest_framework.filters import SearchFilter
+from django.db.models import Count, Q
 
 
 # Create your views here.
 class PostViewSet(viewsets.ModelViewSet):
-    queryset = Post.objects.all()
+    queryset = Post.objects.annotate(
+        likes_count=Count(
+            "reactions", filter=Q(reactions__reaction="like"), distinct=True
+        ),
+        dislikes_count=Count(
+            "reactions", filter=Q(reactions__reaction="dislike"), distinct=True
+        ),
+    )
     filter_backends = [SearchFilter]
     search_fields = ["title", "content"]
 

@@ -4,8 +4,8 @@ from .models import *
 
 class PostSerializer(serializers.ModelSerializer):
     comments = serializers.SerializerMethodField()
-    likes_count = serializers.IntegerField()
-    dislikes_count = serializers.IntegerField()
+    likes_count = serializers.IntegerField(read_only=True)
+    dislikes_count = serializers.IntegerField(read_only=True)
 
     def get_comments(self, instance):
         serializers = CommentSerializer(instance.comments, many=True)
@@ -17,6 +17,7 @@ class PostSerializer(serializers.ModelSerializer):
             "id",
             "title",
             "writer",
+            "content",
             "comments",
             "likes_count",
             "dislikes_count",

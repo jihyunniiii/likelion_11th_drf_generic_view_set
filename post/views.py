@@ -24,6 +24,9 @@ class PostViewSet(viewsets.ModelViewSet):
     filter_backends = [SearchFilter]
     search_fields = ["title", "content"]
 
+    def perform_create(self, serializer):
+        serializer.save(writer=self.request.user)
+
     def get_serializer_class(self):
         if self.action == "list":
             return PostListSerializer

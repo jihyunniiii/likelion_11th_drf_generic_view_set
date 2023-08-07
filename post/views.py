@@ -59,6 +59,18 @@ class PostViewSet(viewsets.ModelViewSet):
         self.add_or_change_reaction(post, request.user, "dislike")
         return Response()
 
+    @action(methods=["GET"], detail=False)
+    def like_top5(self, request):
+        queryset = self.get_queryset().order_by("-likes_count")[:5]
+        serializer = PostSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    @action(methods=["GET"], detail=False)
+    def dislike_top5(self, request):
+        queryset = self.get_queryset().order_by("-dislikes_count")[:5]
+        serializer = PostSerializer(queryset, many=True)
+        return Response(serializer.data)
+
 
 class CommentViewSet(
     viewsets.GenericViewSet,
